@@ -69,7 +69,7 @@ const CustomNavbar: FC<Props> = ({ onQueryChange }) => {
       </Navbar.Brand>
 
       {onQueryChange && (
-        <Navbar.Content>
+        <Navbar.Content hideIn='xs'>
           <Navbar.Item>
             <Input
               contentLeft={
