@@ -33,7 +33,7 @@ const CustomNavbar = () => {
       <Navbar.Content>
         <Navbar.Link underline href='/favorites'>
           <Text color='white' h4>
-            Favoritos
+            Favorites
           </Text>
         </Navbar.Link>
       </Navbar.Content>

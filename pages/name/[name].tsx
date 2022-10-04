@@ -1,12 +1,12 @@
+import axios from 'axios';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import { pokeApi } from '../../api';
 import { MainLayout } from '../../components/layouts';
 import { PokemonDetail } from '../../components/pokemon';
-import { Pokemon, PokemonListResponse } from '../../interfaces';
-import { getPokemonInfo } from '../../utils';
-
+import { PokemonListResponse, PokeProps } from '../../interfaces';
+import { getPokeProps, getPokemonInfo } from '../../utils';
 interface Props {
-  pokemon: Pokemon;
+  pokemon: PokeProps;
 }
 
 const PokemonByName: NextPage<Props> = ({ pokemon }) => {
@@ -28,7 +28,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 };
 
@@ -37,8 +37,19 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const pokemon = await getPokemonInfo(name);
 
+  if (!pokemon)
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+
+  const pokeProps = await getPokeProps(pokemon);
+
   return {
-    props: { pokemon },
+    props: { pokemon: pokeProps },
+    revalidate: 60, // 60 seconds
   };
 };
 

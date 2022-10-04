@@ -1,44 +1,16 @@
-import { useState } from 'react';
-
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 
-import { Button, Card, Container, Grid, Image, Text } from '@nextui-org/react';
-import confetti from 'canvas-confetti';
-
-import { pokeApi } from '../../api';
-import { Pokemon } from '../../interfaces';
-import { getPokemonInfo, localFavorites } from '../../utils';
+import { PokeProps } from '../../interfaces';
+import { getPokemonInfo, getPokeProps } from '../../utils';
 import { MainLayout } from '../../components/layouts';
 import { PokemonDetail } from '../../components/pokemon';
 
 interface Props {
-  pokemon: Pokemon;
+  pokemon: PokeProps;
 }
 const Pokemon: NextPage<Props> = ({ pokemon }) => {
-  const [isInFavorites, setIsInFavorites] = useState(
-    localFavorites.existInFavorites(pokemon.id)
-  );
-
   const upperTitle =
     pokemon.name.split('')[0].toUpperCase() + pokemon.name.slice(1);
-
-  const onToggleFavorite = () => {
-    localFavorites.toggleFavorite(pokemon.id);
-    setIsInFavorites((prevFav) => !prevFav);
-
-    if (!isInFavorites) {
-      confetti({
-        zIndex: 999,
-        particleCount: 100,
-        spread: 160,
-        angle: -135,
-        origin: {
-          x: 1, // 0 - 1
-          y: 0, // 0 -1
-        },
-      });
-    }
-  };
 
   return (
     <MainLayout title={upperTitle}>
@@ -64,7 +36,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
   return {
     paths,
-    fallback: false,
+    fallback: 'blocking',
   };
 };
 
@@ -73,10 +45,24 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
 
   const pokemon = await getPokemonInfo(id);
 
+  if (!pokemon) {
+    // If no pokemon with the requested id is found,
+    // then the user will be redirected to the main page
+    // or any specified url
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
+
+  const pokeProps = await getPokeProps(pokemon);
+
   return {
-    props: {
-      pokemon,
-    },
+    props: { pokemon: pokeProps },
+    // Incremental Static Regeneration
+    revalidate: 60, // seconds
   };
 };
 
