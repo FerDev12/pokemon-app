@@ -1,15 +1,23 @@
-import { useState } from 'react';
+import { FC, useRef } from 'react';
 
 import Image from 'next/image';
 import NextLink from 'next/link';
 
-import { Link, Navbar, Spacer, Text } from '@nextui-org/react';
+import { Input, Link, Navbar, Spacer, Text } from '@nextui-org/react';
 
-const CustomNavbar = () => {
-  const [image, setImage] = useState('');
+interface Props {
+  onQueryChange?: (search: string) => string;
+}
+
+const CustomNavbar: FC<Props> = ({ onQueryChange }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onSearch = () => {
+    if (inputRef.current !== null) onQueryChange!(inputRef.current.value);
+  };
 
   return (
-    <Navbar isBordered shouldHideOnScroll variant='sticky'>
+    <Navbar isBordered shouldHideOnScroll variant='floating'>
       <Navbar.Brand>
         <NextLink href='/' passHref>
           <Link>
@@ -29,6 +37,22 @@ const CustomNavbar = () => {
           </Link>
         </NextLink>
       </Navbar.Brand>
+
+      {onQueryChange && (
+        <Navbar.Content>
+          <Navbar.Item>
+            <Input
+              aria-label='search-input'
+              ref={inputRef}
+              type='search'
+              onChange={onSearch}
+              clearable
+              underlined
+              placeholder='Search pokemon'
+            />
+          </Navbar.Item>
+        </Navbar.Content>
+      )}
 
       <Navbar.Content>
         <Navbar.Link underline href='/favorites'>

@@ -1,6 +1,7 @@
 import { Card, Grid, Row, Text } from '@nextui-org/react';
 import type { NextPage } from 'next';
 import { GetStaticProps } from 'next';
+import { useState } from 'react';
 import { pokeApi } from '../api';
 import { MainLayout } from '../components/layouts';
 import { PokemonCard } from '../components/pokemon';
@@ -11,13 +12,28 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ pokemons }) => {
-  const pokemonCards = pokemons.map((pokemon) => (
+  const [query, setQuery] = useState('');
+
+  const filteredPokemons = pokemons.filter((pokemon) => {
+    if (query) return pokemon.name.includes(query.toLowerCase());
+    return pokemon;
+  });
+
+  const pokemonCards = filteredPokemons.map((pokemon) => (
     <PokemonCard pokemon={pokemon} key={pokemon.id} />
   ));
 
+  const handleQueryOnChange = (search: string) => {
+    setQuery(search);
+    return query;
+  };
+
   return (
     <>
-      <MainLayout title='Listado de Pókemons'>
+      <MainLayout
+        onNavbarQueryChange={handleQueryOnChange}
+        title='Pokemon List'
+      >
         <Grid.Container gap={2} justify='flex-start'>
           {pokemonCards}
         </Grid.Container>
