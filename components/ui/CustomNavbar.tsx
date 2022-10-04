@@ -3,7 +3,15 @@ import { FC, useRef } from 'react';
 import Image from 'next/image';
 import NextLink from 'next/link';
 
-import { Input, Link, Navbar, Spacer, Text } from '@nextui-org/react';
+import {
+  Container,
+  Input,
+  Link,
+  Navbar,
+  Spacer,
+  Text,
+} from '@nextui-org/react';
+import { SearchIcon } from '.';
 
 interface Props {
   onQueryChange?: (search: string) => string;
@@ -17,21 +25,43 @@ const CustomNavbar: FC<Props> = ({ onQueryChange }) => {
   };
 
   return (
-    <Navbar isBordered shouldHideOnScroll variant='floating'>
+    <Navbar isBordered shouldHideOnScroll variant='sticky'>
       <Navbar.Brand>
         <NextLink href='/' passHref>
           <Link>
             <Image
               src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/4.svg'
               alt='icono de la app'
-              width={40}
-              height={40}
+              width={27}
+              height={27}
             />
             <Spacer x={0.5} />
-            <Text color='white' h2>
+            <Text
+              color='white'
+              css={{
+                '@xsMax': {
+                  fontSize: 25,
+                },
+                '@mdMax': {
+                  fontSize: 30,
+                },
+              }}
+              h2
+            >
               P
             </Text>
-            <Text color='white' h3>
+            <Text
+              color='white'
+              css={{
+                '@xsMax': {
+                  fontSize: 18,
+                },
+                '@smMax': {
+                  fontSize: 22,
+                },
+              }}
+              h3
+            >
               okémon
             </Text>
           </Link>
@@ -42,13 +72,19 @@ const CustomNavbar: FC<Props> = ({ onQueryChange }) => {
         <Navbar.Content>
           <Navbar.Item>
             <Input
-              aria-label='search-input'
+              contentLeft={
+                <SearchIcon fill='var(--nextui-colors-accents6)' size={16} />
+              }
+              // contentLeftStyling={false}
+              aria-label='search input'
               ref={inputRef}
-              type='search'
-              onChange={onSearch}
               clearable
-              underlined
+              onChange={onSearch}
+              bordered
               placeholder='Search pokemon'
+              css={{
+                width: 'auto',
+              }}
             />
           </Navbar.Item>
         </Navbar.Content>

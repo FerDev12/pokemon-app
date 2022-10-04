@@ -1,4 +1,4 @@
-import { Card, Grid, Row, Text } from '@nextui-org/react';
+import { Card, Grid, Pagination, Row, Text } from '@nextui-org/react';
 import type { NextPage } from 'next';
 import { GetStaticProps } from 'next';
 import { useState } from 'react';
@@ -44,7 +44,7 @@ const Home: NextPage<Props> = ({ pokemons }) => {
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   // fetch pokemons data, define response type
-  const { data } = await pokeApi.get<PokemonListResponse>('/pokemon?limit=151');
+  const { data } = await pokeApi.get<PokemonListResponse>('/pokemon?limit=649');
 
   const pokemons: SmallPokemon[] = data.results.map((pokemon, i) => {
     const id = i + 1;
